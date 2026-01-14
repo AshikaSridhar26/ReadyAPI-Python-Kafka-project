@@ -1,0 +1,22 @@
+api:
+  # Used by Python tests
+  # Can be overridden by ReadyAPI via API_BASE_URL env var
+  base_url: "http://localhost:1080"
+
+kafka:
+  bootstrap_servers: "localhost:9092"
+  topic: "customer.events"
+  group_id: "qa-e2e-consumer"
+
+db:
+  # MySQL configuration
+  type: "mysql"
+  host: "localhost"
+  port: 3306
+  database: "social_security"
+  user: "root"
+  password: "root"
+
+elastic:
+  url: "http://localhost:9200"
+  index: "customers"
