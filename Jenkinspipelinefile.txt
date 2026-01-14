@@ -1,0 +1,56 @@
+pipeline {
+  agent any
+
+  parameters {
+    booleanParam(name: 'RUN_READYAPI', defaultValue: false, description: 'Run ReadyAPI/SoapUI testrunner stage')
+  }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Start Stack') {
+      steps {
+        sh '''
+          docker compose down -v || true
+          docker compose up -d --build kafka mysql mockserver
+          docker compose ps
+        '''
+      }
+    }
+
+    stage('Run Pytest') {
+      steps {
+        sh '''
+          docker compose up -d --build tests
+          docker compose logs --no-color tests || true
+        '''
+      }
+    }
+
+    stage('Run ReadyAPI Testrunner') {
+      when { expression { return params.RUN_READYAPI } }
+      steps {
+        sh '''
+          # Use 'readyapi' service if using TestEngine (Path A)
+          docker compose up --build --exit-code-from readyapi readyapi
+          docker compose logs --no-color readyapi || true
+
+          # OR if using SoapUI (Path B), run:
+          # docker compose up --build --exit-code-from soapui soapui
+        '''
+      }
+    }
+  }
+
+  post {
+    always {
+      sh '''
+        docker compose logs --no-color || true
+        docker compose down -v || true
+      '''
+      archiveArtifacts artifacts: 'artifacts/**/*', allowEmptyArchive: true
+    }
+  }
+}

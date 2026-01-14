@@ -1,0 +1,40 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /opt
+
+# Install Java + basics
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openjdk-17-jre-headless \
+    unzip \
+    ca-certificates \
+    curl \
+  && rm -rf /var/lib/apt/lists/*
+
+# Copy ReadyAPI TestEngine zip (you must provide it)
+# Put it at: readyapi/tools/ReadyAPI-TestEngine.zip
+COPY readyapi/tools/ReadyAPI-TestEngine.zip /opt/ReadyAPI-TestEngine.zip
+
+# Unzip into /opt/readyapi
+RUN mkdir -p /opt/readyapi && \
+    unzip /opt/ReadyAPI-TestEngine.zip -d /opt/readyapi && \
+    rm /opt/ReadyAPI-TestEngine.zip
+
+# Copy your ReadyAPI project into the container
+WORKDIR /work
+COPY readyapi/project ./readyapi
+
+# Create artifacts folder for reports
+RUN mkdir -p /work/artifacts
+
+# ---- License handling (choose ONE approach) ----
+# Option A: License key passed as env var at runtime (recommended)
+#   READYAPI_LICENSE_KEY=xxxxx
+#
+# Option B: Floating license server env var at runtime
+#   READYAPI_LICENSE_SERVER=27000@license-server
+#
+# We do not hardcode license values in the image.
+
+# Default command prints help (compose/jenkins will override this)
+CMD ["/opt/readyapi/bin/testrunner.sh", "-h"]
