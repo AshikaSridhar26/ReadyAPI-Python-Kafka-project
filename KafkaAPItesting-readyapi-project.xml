@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="a7070409-2dd7-4421-98f5-8d8089af989b" created="3.64.0" activeEnvironment="Default environment" encryptionMode="Not encrypted" name="KafkaAPItesting" projectVersion="" updated="3.64.0 2025-12-11T09:36:10Z" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="14be8b2f-265e-41a7-a87d-873e37222640" lastUpdated="2026-01-13T23:02:35.434+01:00" name="Add_Customer_E2E" type="rest_ex" wadlVersion="https://swagger.io/openapiv3/specification" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings id="0526216e-9048-45a9-911e-ffab51e9d30e"/><con:definitionCache type="TEXT" rootPart="Add_Customer_E2E.json"><con:part><con:url>Add_Customer_E2E.json</con:url><con:content>{"openapi":"3.1.0","info":{"title":"Add_Customer_E2E","description":"","version":"1.0.0"},"servers":[{"url":"/"}],"paths":{"":{"description":"","post":{"description":"","requestBody":{"content":{"application/json":{}}},"responses":{"default":{"description":"Default response"}}}}}}</con:content><con:type>https://swagger.io/openapiv3/specification</con:type></con:part></con:definitionCache><con:endpoints/><con:resource name="" path="" id="e9f94bfc-0296-4c46-8147-0d64bf0f2d87"><con:settings/><con:parameters/><con:method name="Method 1" id="f60e7fbf-e475-4af7-95c5-8554fde34236" method="POST"><con:settings/><con:parameters/><con:request name="Request 1" id="ad4c8c5b-5f40-4265-8730-395fb030c920" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment>&lt;con:entry key="X-Correlation-Id" value="${#TestCase#corrId}" xmlns:con="http://eviware.com/soapui/config"/>&lt;con:entry key="Content-Type" value="application/json" xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></con:setting></con:settings><con:endpoint>http://localhost:1080/customers</con:endpoint><con:request>{
+  "customerName": "${#TestCase#customerName}"
+}</con:request><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource></con:interface><con:testSuite id="0d31aa4e-7e63-47da-a64d-fe0d1814c435" name="Kafka_test_Suite"><con:settings id="26eee89b-387c-4676-b1d0-48525fb29b25"/><con:runType>SEQUENTIAL</con:runType><con:testCase id="3c192e01-f404-46c9-b041-172d45a11785" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="Test Case 1" searchProperties="true" timeout="0"><con:settings/><con:testStep type="restrequest" name="AddCustomer" id="216aa9ef-0c9f-45f8-b4f1-f7795120e40b"><con:settings/><con:config service="Add_Customer_E2E" resourcePath="" methodName="Method 1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="AddCustomer" id="ad4c8c5b-5f40-4265-8730-395fb030c920" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment>&lt;con:entry key="X-Correlation-Id" value="${#TestCase#corrId}" xmlns:con="http://eviware.com/soapui/config"/>&lt;con:entry key="Content-Type" value="application/json" xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></con:setting></con:settings><con:endpoint>http://localhost:1080/customers</con:endpoint><con:request>{
+  "customerName": "${#TestCase#customerName}"
+}</con:request><con:originalUri>http://localhost/customers</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="0468552e-14a7-48cb-8213-23bdc4a3a6ef" name="Valid HTTP Status Codes"><con:settings/><con:configuration><codes>201</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="77c3d0e6-42a8-414c-8d3a-549166b5b8ac" name="Contains"><con:configuration><token>customerId</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="19925a74-6ff7-4ff3-8eb0-3480ded1f1a3" name="Contains 2"><con:configuration><token>status</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="ad0952b7-e8f5-4a02-b68f-08669a281446" name="Script Assertion"><con:configuration><scriptText>import groovy.json.JsonSlurper
+//Validate HTTP Status
+def status=messageExchange.response.statusCode
+assert status==201
+//Parse Json response
+def responseText=messageExchange.response.requestContent
+//assert responseText=="Response body is empty"
+def json=new JsonSlurper().parseText(responseText)
+//Validate mandatory fileds
+//assert json.customerId : "customerId is missing"
+assert json.status == "PENDING" : "Expected status=PENDING but got ${json.status}"
+assert json.customerName : "customerName is missing"
+assert json.customerId : "customerId is missing"
+assert json.status == "PENDING" : "Expected status=PENDING but got ${json.status}"
+assert json.customerName : "customerName is missing"
+def customerName=context.expand('${#TestCase#customerName}')
+assert json.customerName == expectedName :
+        "customerName mismatch. Expected=${expectedName}, Actual=${json.customerName}"</scriptText></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:parameters/><con:parameterOrder/></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="writecontext" id="d606d8b1-3122-4d2d-9d3d-6bded4bf77c7"><con:settings/><con:config><script>import groovy.json.JsonOutput
+
+def corr = context.expand('${#Project#correlationId}')
+def customerId = context.expand('${#Project#customerId}')
+def customerName = context.expand('${#TestCase#customerName}')
+
+def ctx = [
+  correlationId: corr,
+  customerId: customerId,
+  expected: [
+    customerName: customerName
+  ]
+]
+
+// Put artifacts outside src (clean)
+def projectDir = context.expand('${#Project#projectDir}')
+def outPath = "${projectDir}/../artifacts/testContext.json"
+new File(outPath).parentFile.mkdirs()
+new File(outPath).text = JsonOutput.prettyPrint(JsonOutput.toJson(ctx))
+
+log.info "Wrote test context: ${outPath}"
+</script></con:config></con:testStep><con:testStep type="groovy" name="InitCorrelationId" id="3c1731c4-45fb-4d13-ae30-3923410ae112"><con:settings/><con:config><script>import java.util.UUID
+
+def corr = context.expand('${#Project#correlationId}')
+if (!corr || corr.trim().isEmpty()) {
+    corr = UUID.randomUUID().toString()
+    testRunner.testCase.testSuite.project.setPropertyValue('correlationId', corr)
+}
+log.info "Using correlationId: ${corr}"
+</script></con:config></con:testStep><con:testStep type="groovy" name="ExtractResponse" id="cd7994b1-c675-475b-acfa-d1c384d74ac5"><con:settings/><con:config><script>import groovy.json.JsonSlurper
+
+def resp = context.expand('${AddCustomer#Response}').toString()
+assert resp?.trim() : "AddCustomer response is empty"
+
+def json = new JsonSlurper().parseText(resp)
+
+// Extract from response
+def customerIdFromResp = json.customerId?.toString()
+def customerNameFromResp = json.customerName?.toString()
+
+// Fallbacks from Project properties (NOT TestCase)
+def customerId = customerIdFromResp ?: context.expand('${#Project#customerId}').toString()
+if (!customerId) customerId = "CUST-10001"   // optional: remove if you want strict
+
+def customerName = customerNameFromResp ?: context.expand('${#Project#customerName}').toString()
+assert customerName : "customerName missing in response and Project property"
+
+// CorrelationId: generate if missing, never hardcode
+def correlationId = context.expand('${#Project#correlationId}').toString()
+if (!correlationId) {
+    correlationId = UUID.randomUUID().toString()
+}
+
+// Save back to Project
+def proj = testRunner.testCase.testSuite.project
+proj.setPropertyValue("customerId", customerId)
+proj.setPropertyValue("customerName", customerName)
+proj.setPropertyValue("correlationId", correlationId)
+
+log.info "Saved customerId=${customerId}, customerName=${customerName}, correlationId=${correlationId}"
+</script></con:config></con:testStep><con:testStep type="groovy" name="WriteTestContext" id="75211134-5bb0-4785-9917-66f1210d7b4e"><con:settings/><con:config><script>import groovy.json.JsonOutput
+
+def correlationId = context.expand('${#Project#correlationId}').toString()
+def customerId    = context.expand('${#Project#customerId}').toString()
+def customerName  = context.expand('${#Project#customerName}').toString()
+
+def ctx = [
+  correlationId: correlationId,
+  customerId: customerId,
+  expected: [ customerName: customerName ]
+]
+
+def outDir = new File("C:\\artifacts")
+if (!outDir.exists() &amp;&amp; !outDir.mkdirs()) {
+    assert false : "FAILED to create folder: C:\\artifacts"
+}
+
+def outFile = new File(outDir, "testContext.json")
+outFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(ctx))
+
+assert outFile.exists()
+log.info "Wrote test context to: ${outFile.absolutePath}"
+</script></con:config></con:testStep><con:testStep type="groovy" name="StartPythonConsumer" id="ff4ae2b3-7a62-4562-a421-6883d91de5b7"><con:settings/><con:config><script>// --- paths ---
+def pyProjectDir = "C:\\Users\\Acer\\OneDrive\\Desktop\\python"
+def pythonExe    = "C:\\Users\\Acer\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+def ctxPath      = "C:\\artifacts\\testContext.json"
+
+// ensure artifacts dir exists
+def artifactsDir = new File("C:\\artifacts")
+if (!artifactsDir.exists()) artifactsDir.mkdirs()
+
+// files
+def outFile   = new File(artifactsDir, "pytest_out.txt")
+def errFile   = new File(artifactsDir, "pytest_err.txt")
+def readyFile = new File(artifactsDir, "consumer_ready.txt")
+
+outFile.text = ""
+errFile.text = ""
+if (readyFile.exists()) readyFile.delete()
+
+// save ready path into Project property (used by your WaitForReady step)
+testRunner.testCase.testSuite.project.setPropertyValue("readyFile", readyFile.absolutePath)
+log.info "READY file path set to: " + readyFile.absolutePath
+
+// unique group id (ONE value only)
+def groupId = "qa-e2e-" + System.currentTimeMillis()
+testRunner.testCase.testSuite.project.setPropertyValue("kafkaGroupId", groupId)
+log.info "Kafka group id: " + groupId
+
+// command (MUST include .py)
+List&lt;String> cmd = [
+  pythonExe,
+  "-m", "pytest",
+  "-q",
+  "src\\tests"
+]
+
+// process
+def pb = new ProcessBuilder(cmd)
+pb.directory(new File(pyProjectDir))
+pb.redirectOutput(outFile)
+pb.redirectError(errFile)
+
+def env = pb.environment()
+env.put("TEST_CONTEXT_PATH", ctxPath)
+env.put("ARTIFACTS_DIR", artifactsDir.absolutePath)
+
+// Kafka
+env.put("KAFKA_BOOTSTRAP", "localhost:9092")
+env.put("KAFKA_TOPIC", "customer.events")
+env.put("KAFKA_GROUP_ID", groupId)
+
+// MySQL
+env.put("MYSQL_HOST", "localhost")
+env.put("MYSQL_PORT", "3306")
+env.put("MYSQL_DB", "social_security")
+env.put("MYSQL_USER", "qa_user")
+env.put("MYSQL_PASS", "qa_pass")
+
+pb.start()
+log.info "Started Python. STDOUT=" + outFile.absolutePath + " STDERR=" + errFile.absolutePath</script></con:config></con:testStep><con:testStep type="groovy" name="WaitForConsumerReady" id="ba0f8533-8c53-49a7-acdb-a7fae85b29e9"><con:settings/><con:config><script>def readyPath = context.expand('${#Project#readyFile}').toString().trim()
+log.info "Waiting for READY file: [${readyPath}]"
+
+def f = new File(readyPath)
+def dir = f.parentFile
+if (dir == null) throw new Exception("readyFile has no parent directory: " + readyPath)
+
+log.info "Artifacts dir: ${dir.absolutePath} exists=${dir.exists()} canRead=${dir.canRead()}"
+
+if (!dir.exists()) {
+    def ok = dir.mkdirs()
+    log.info "Created artifacts dir: ${dir.absolutePath} ok=${ok}"
+}
+
+def deadline = System.currentTimeMillis() + 120000 // 120s to debug
+long lastList = 0
+
+while (System.currentTimeMillis() &lt; deadline) {
+
+    if (f.exists()) {
+        def content = f.getText("UTF-8")
+        log.info "FOUND file. size=${f.length()} lastModified=${new Date(f.lastModified())} content=[${content}]"
+        if (content.contains("READY")) return
+    }
+
+    // list directory once per second so you can see what's being created
+    if (System.currentTimeMillis() - lastList > 1000) {
+        lastList = System.currentTimeMillis()
+        def files = dir.listFiles()
+        if (files == null) {
+            log.info "Dir listing is null (no access?)"
+        } else {
+            log.info "Dir contains: " + files.collect { it.name + "(" + it.length() + ")" }.join(", ")
+        }
+    }
+
+    sleep(250)
+}
+
+throw new Exception("Timeout waiting for READY file: ${readyPath} (dir=${dir.absolutePath})")
+</script></con:config></con:testStep><con:testStep type="groovy" name="ProduceKafkaEvent" id="9b68e4be-6a86-41c2-80d5-b43d74ff09dd"><con:settings/><con:config><script>import groovy.json.JsonOutput
+
+def customerId    = context.expand('${#Project#customerId}').toString()
+def customerName  = context.expand('${#Project#customerName}').toString()
+def correlationId = context.expand('${#Project#correlationId}').toString()
+
+def payload = JsonOutput.toJson([
+  eventType: "CUSTOMER_CREATED",
+  customerId: customerId,
+  customerName: customerName,
+  correlationId: correlationId
+])
+
+log.info "Producing Kafka payload: ${payload}"
+
+List&lt;String> cmd = [
+  "docker", "exec", "-i", "kafka-kafka-1",
+  "kafka-console-producer",
+  "--bootstrap-server", "kafka:9092",     // IMPORTANT CHANGE
+  "--topic", "customer.events"
+].collect { it.toString() }
+
+def pb = new ProcessBuilder(cmd)
+pb.redirectErrorStream(true)
+def p = pb.start()
+
+p.outputStream.withWriter("UTF-8") { w ->
+  w.write(payload)
+  w.write("\n")
+}
+
+def out = p.inputStream.text
+def rc = p.waitFor()
+
+if (out?.trim()) log.info out
+assert rc == 0 : "Kafka produce failed rc=${rc}"
+</script></con:config></con:testStep><con:testStep type="groovy" name="VerifyKafkaProduced" id="8f5fd38e-90dc-43bc-bb25-98801457b370"><con:settings/><con:config><script>def cmd = [
+  "docker", "exec", "-i", "kafka-kafka-1",
+  "kafka-console-consumer",
+  "--bootstrap-server", "kafka:9092",
+  "--topic", "customer.events",
+  "--from-beginning",
+  "--max-messages", "5"
+].collect { it.toString() }
+
+def p = new ProcessBuilder(cmd).redirectErrorStream(true).start()
+def out = p.inputStream.text
+def rc = p.waitFor()
+
+log.info "Kafka dump:\n" + out
+assert rc == 0
+</script></con:config></con:testStep><con:testStep type="groovy" name="InsertCustomerToMySQL" id="2b9c6714-35c6-45c5-9940-bee4ea18c251"><con:settings/><con:config><script>// Paths
+def pythonExe = "C:\\Users\\Acer\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+def projectDir = "C:\\Users\\Acer\\OneDrive\\Desktop\\python"
+def scriptPath = "src\\tools\\seed_mysql.py"
+def ctxPath = "C:\\artifacts\\testContext.json"
+
+// Build command
+List&lt;String> cmd = [
+    pythonExe,
+    scriptPath
+].collect { it.toString() }
+
+def pb = new ProcessBuilder(cmd)
+pb.directory(new File(projectDir))
+pb.redirectErrorStream(true)
+
+// Environment variables
+def env = pb.environment()
+env.put("TEST_CONTEXT_PATH", ctxPath)
+env.put("MYSQL_HOST", "localhost")
+env.put("MYSQL_PORT", "3306")
+env.put("MYSQL_DB", "social_security")
+env.put("MYSQL_USER", "qa_user")
+env.put("MYSQL_PASS", "qa_pass")
+
+def p = pb.start()
+def out = p.inputStream.text
+def rc = p.waitFor()
+
+log.info "InsertCustomerToMySQL output:\n" + out
+assert rc == 0 : "MySQL seed failed"
+</script></con:config></con:testStep><con:testStep type="groovy" name="WaitForPythonResult step" id="f8cbee77-9c57-4c5f-9224-54deb6ccb75e"><con:settings/><con:config><script>def outFile = new File("C:\\artifacts\\pytest_out.txt")
+def errFile = new File("C:\\artifacts\\pytest_err.txt")
+
+def deadline = System.currentTimeMillis() + 60000
+while (System.currentTimeMillis() &lt; deadline) {
+    def out = outFile.exists() ? outFile.text : ""
+    def err = errFile.exists() ? errFile.text : ""
+
+    if (out.contains("passed") || out.contains("failed") || err.trim().length() > 0) break
+    sleep(1000)
+}
+
+def out = outFile.exists() ? outFile.text : "(no stdout)"
+def err = errFile.exists() ? errFile.text : "(no stderr)"
+
+log.info "----- PYTEST STDOUT -----\n" + out
+log.error "----- PYTEST STDERR -----\n" + err
+
+assert out.contains("passed") : "Python test did not pass."
+</script></con:config></con:testStep><con:testStep type="groovy" name="DockerCheck" id="ddaecc0b-48f4-42bf-bf5a-93b77452908c"><con:settings/><con:config><script>List&lt;String> cmd = ["docker", "--version"].collect { it.toString() }
+def p = new ProcessBuilder(cmd).redirectErrorStream(true).start()
+def out = p.inputStream.text
+def rc = p.waitFor()
+log.info "docker --version rc=" + rc + "\n" + out
+assert rc == 0 : "ReadyAPI cannot run docker. Fix PATH or use full path to docker.exe"
+</script></con:config></con:testStep><con:testStep type="groovy" name="ProduceKafkaBadEvent" id="a9e6c259-3026-41f8-8ed9-f591525a942b"><con:settings/><con:config><script>import groovy.json.JsonOutput
+
+def payload = JsonOutput.toJson([
+  eventType: "CUSTOMER_CREATED",
+  customerId: "CUST-NEG-1",
+  customerName: "BadEvent"
+])
+
+log.info "Producing BAD Kafka payload: ${payload}"
+
+List&lt;String> cmd = [
+  "docker","exec","-i","kafka-kafka-1",
+  "kafka-console-producer",
+  "--bootstrap-server","kafka:9092",
+  "--topic","customer.events"
+].collect { it.toString() }
+
+def p = new ProcessBuilder(cmd).redirectErrorStream(true).start()
+p.outputStream.withWriter("UTF-8") { w -> w.write(payload + "\n") }
+
+def out = p.inputStream.text
+def rc = p.waitFor()
+if (out?.trim()) log.info out
+assert rc == 0
+</script></con:config></con:testStep><con:testStep type="groovy" name="SetRunId" id="ccaa4920-9e59-4ce4-bac9-2da2e1e1013d"><con:settings/><con:config><script>def runId = "run-" + System.currentTimeMillis()
+testRunner.testCase.testSuite.project.setPropertyValue("runId", runId)
+log.info "RUN_ID=" + runId</script></con:config></con:testStep><con:testStep type="groovy" name="runJmeter" id="7476bf3f-8b6a-44c8-ba77-4b787c6bb367"><con:settings/><con:config><script>def JAVA   = "java"
+def JMETER = "C:\\Users\\Acer\\Downloads\\apache-jmeter-5.6.3\\apache-jmeter-5.6.3\\bin\\ApacheJMeter.jar"
+def JMX    = "C:\\Users\\Acer\\OneDrive\\Desktop\\ReadyAPIIntegration.jmx"
+def OUTJTL = "C:\\artifacts\\jmeter_results.jtl"
+def LOG    = "C:\\artifacts\\jmeter.log"
+
+def runId = context.expand('${#Project#runId}').toString()
+
+List&lt;String> cmd = [
+  JAVA, "-jar", JMETER,
+  "-n",
+  "-t", JMX,
+  "-l", OUTJTL,
+  "-j", LOG,
+  "-JRUN_ID=" + runId
+]
+
+def p = new ProcessBuilder(cmd).redirectErrorStream(true).start()
+def out = p.inputStream.text
+def rc = p.waitFor()
+
+log.info out
+assert rc == 0
+</script></con:config></con:testStep><con:testStep type="groovy" name="produceJmterKafkaevents" id="62a23faf-b287-4d5f-b170-9ed7d87cd4e8"><con:settings/><con:config><script>import groovy.json.JsonOutput
+
+def runId = context.expand('${#Project#runId}').toString()
+def expected = 100  // MUST match JMeter total requests
+
+def container = "kafka-kafka-1"
+def topic = "customer.events"
+
+for (int i=1; i&lt;=expected; i++) {
+    def payload = JsonOutput.toJson([
+        eventType: "CUSTOMER_CREATED",
+        customerId: "CUST-LD-" + i,
+        customerName: "LoadUser-" + i,
+        correlationId: runId + "-" + i,   // &lt;-- IMPORTANT
+        runId: runId                      // &lt;-- IMPORTANT
+    ])
+
+    List&lt;String> cmd = [
+      "docker","exec","-i",container,
+      "kafka-console-producer",
+      "--bootstrap-server","kafka:9092",
+      "--topic",topic
+    ]
+
+    def p = new ProcessBuilder(cmd).redirectErrorStream(true).start()
+    p.outputStream.withWriter("UTF-8") { w -> w.write(payload + "\n") }
+    def rc = p.waitFor()
+    assert rc == 0 : "Kafka produce failed rc=" + rc
+}
+
+log.info "Produced ${expected} events for runId=${runId}"
+</script></con:config></con:testStep><con:testStep type="groovy" name="RunPytestLoadValidation" id="c64b2ad4-288c-4d39-9a47-3679bfa4ce21"><con:settings/><con:config><script>def pythonExe  = "C:\\Users\\Acer\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+def projectDir = "C:\\Users\\Acer\\OneDrive\\Desktop\\python"
+
+def runId = context.expand('${#Project#runId}').toString()
+
+def outFile = new File("C:\\artifacts\\pytest_out.txt")
+def errFile = new File("C:\\artifacts\\pytest_err.txt")
+outFile.text = ""
+errFile.text = ""
+
+List&lt;String> cmd = [
+  pythonExe, "-m", "pytest", "-q",
+  "src\\tests\\test_kafka_load_runid.py"
+].collect { it.toString() }
+
+def pb = new ProcessBuilder(cmd)
+pb.directory(new File(projectDir))
+pb.redirectOutput(outFile)
+pb.redirectError(errFile)
+
+def env = pb.environment()
+env.put("RUN_ID", runId)
+env.put("EXPECTED_EVENTS", "100")
+env.put("KAFKA_BOOTSTRAP", "localhost:9092")
+env.put("KAFKA_TOPIC", "customer.events")
+
+def p = pb.start()
+def rc = p.waitFor()
+
+log.info "----- PYTEST STDOUT -----\n" + outFile.text
+log.error "----- PYTEST STDERR -----\n" + errFile.text
+assert rc == 0 : "Kafka load validation failed rc=" + rc
+</script></con:config></con:testStep><con:properties><con:property><con:name>customerName</con:name><con:value>Pallavi</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:properties><con:property><con:name>Customer id</con:name><con:value>12300</con:value></con:property></con:properties><con:reportParameters/></con:testSuite><con:properties><con:property><con:name>correlationId</con:name><con:value>0ff58b61-1b66-4511-8524-9caccc17af21</con:value></con:property><con:property><con:name>customerId</con:name><con:value>CUST-10001</con:value></con:property><con:property><con:name>customerName</con:name><con:value>Pallavi</con:value></con:property><con:property><con:name>kafkaGroupId</con:name><con:value>qa-e2e-1768428820463</con:value></con:property><con:property><con:name>readyFile</con:name><con:value>C:\artifacts\consumer_ready.txt</con:value></con:property><con:property><con:name>runId</con:name><con:value>run-1768424372983</con:value></con:property></con:properties><con:wssContainer/><con:databaseConnectionContainer/><con:jmsConnectionContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:reporting><con:xmlTemplates/><con:parameters/></con:reporting><con:eventHandlers type="RequestFilter.filterRequest" name="RequestFilter.filterRequest"><con:script>// Sample event script to add custom HTTP header to all outgoing REST, SOAP and HTTP(S) calls
+// This code is often used for adding custom authentication to ReadyAPI functional tests
+
+// If hardcoding the token, uncomment and change line 5
+// token = '4567'
+
+// If your token is parameterized in Project level custom property, uncomment line 8
+// token = request.parent.testCase.testSuite.project.getProperty('auth_token').getValue()
+
+// To modify all outgoing calls, remove comments from lines 11 to 16
+// headers = request.requestHeaders
+// if (headers.containsKey('auth_token2') == false) {
+//   headers.put('auth_token2', token)
+//   request.requestHeaders = headers
+// }</con:script></con:eventHandlers><con:eventHandlers type="TestRunListener.afterStep" name="TestRunListener.afterStep"><con:script>// Save all test step results into files
+// Change the directory path in line 5 to a location where you want to store details
+// then uncomment lines 5 to 10
+
+// filePath = 'C:\\tempOutputDirectory\\'
+// fos = new java.io.FileOutputStream(filePath + testStepResult.testStep.label + '.txt', true)
+// pw = new java.io.PrintWriter(fos)
+// testStepResult.writeTo(pw)
+// pw.close()
+// fos.close()</con:script></con:eventHandlers><con:authRepository/><con:tags/></con:soapui-project>
