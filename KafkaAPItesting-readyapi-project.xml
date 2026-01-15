@@ -8,7 +8,7 @@
 def status=messageExchange.response.statusCode
 assert status==201
 //Parse Json response
-def responseText=messageExchange.response.requestContent
+def responseText=messageExchange.response.responseContent
 //assert responseText=="Response body is empty"
 def json=new JsonSlurper().parseText(responseText)
 //Validate mandatory fileds
