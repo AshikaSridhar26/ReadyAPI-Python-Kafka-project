@@ -7,19 +7,19 @@ It validates not just APIs, but the entire data flow across layers under both fu
 
 The framework is deliberately layered to keep responsibilities clear:
 
-ReadyAPI orchestrates API-level testing
+    - ReadyAPI orchestrates API-level testing
 
-MockServer / API publishes asynchronous Kafka events
+    - MockServer / API publishes asynchronous Kafka events
 
-Kafka handles event propagation
+    - Kafka handles event propagation
 
-Python (pytest) validates backend truth asynchronously
+    - Python (pytest) validates backend truth asynchronously
 
-MySQL stores system state
+    - MySQL stores system state
 
-JMeter generates load and publishes Kafka messages
+    - JMeter generates load and publishes Kafka messages
 
-Jenkins runs everything in CI and publishes reports
+    - Jenkins runs everything in CI and publishes reports
 
 
 ### Logical Flow
@@ -47,35 +47,35 @@ This setup reflects how real distributed systems behave — asynchronous, eventu
 
 ### Core Design Principles
 
-- Correlation-driven testing
-Uses correlationId and runId consistently across API, Kafka, and database layers.
-
-- Contract testing at multiple layers
-Prevents breaking changes at both API and event levels.
-
-- Eventual consistency handling
-Uses polling with timeouts instead of brittle static waits.
-
-- Cross-layer validation
-Verifies correctness across API → Kafka → Database, not just surface responses.
-
-- Parallel-safe execution
-Isolated Kafka consumer groups and test data enable safe concurrent runs.
-
-- CI observability
-Jenkins publishes reports and archives artifacts for traceability.
+    - Correlation-driven testing
+    Uses correlationId and runId consistently across API, Kafka, and database layers.
+    
+    - Contract testing at multiple layers
+    Prevents breaking changes at both API and event levels.
+    
+    - Eventual consistency handling
+    Uses polling with timeouts instead of brittle static waits.
+    
+    - Cross-layer validation
+    Verifies correctness across API → Kafka → Database, not just surface responses.
+    
+    - Parallel-safe execution
+    Isolated Kafka consumer groups and test data enable safe concurrent runs.
+    
+    - CI observability
+    Jenkins publishes reports and archives artifacts for traceability.
 
 ### Contract Testing Strategy
 
--API Contracts
-Validated in ReadyAPI using JSON Schema and field-level assertions.
-
--Kafka Event Contracts
-Validated in Python by asserting:
-Required fields
-Data types
-Semantic correctness
-This ensures producer–consumer compatibility and catches breaking changes early.
+    -API Contracts
+        Validated in ReadyAPI using JSON Schema and field-level assertions.
+    
+    -Kafka Event Contracts
+        Validated in Python by asserting:
+        Required fields
+        Data types
+        Semantic correctness
+        This ensures producer–consumer compatibility and catches breaking changes early.
 ### Tech Used
 
     ReadyAPI (API + Kafka testing)
