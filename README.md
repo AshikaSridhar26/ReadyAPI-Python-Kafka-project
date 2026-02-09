@@ -1,7 +1,81 @@
-### Project Overview
-This project automates end-to-end API and event-driven testing using ReadyAPI, Kafka, Python, and MySQL.
-It validates REST APIs, Kafka message production/consumption, and database persistence using a fully containerized setup.
+### ReadyAPI – Python – Kafka End-to-End Test Framework
 
+This project demonstrates a true end-to-end testing framework for event-driven systems using ReadyAPI, Kafka, Python, MySQL, JMeter, and Jenkins.
+It validates not just APIs, but the entire data flow across layers under both functional and load conditions.
+
+#### Architecture Overview
+
+The framework is deliberately layered to keep responsibilities clear:
+
+ReadyAPI orchestrates API-level testing
+
+MockServer / API publishes asynchronous Kafka events
+
+Kafka handles event propagation
+
+Python (pytest) validates backend truth asynchronously
+
+MySQL stores system state
+
+JMeter generates load and publishes Kafka messages
+
+Jenkins runs everything in CI and publishes reports
+
+
+Logical Flow
+
+    CLIENT / READYAPI
+            |
+            | POST /customers (correlationId)
+            v
+    MOCKSERVER / API
+            |
+            | async event
+            v
+    KAFKA  <---- JMeter (load with runId)
+            |
+            | consume + retry
+            v
+    PYTHON (pytest)
+            |
+            | poll until consistent
+            v
+    MYSQL
+
+
+This setup reflects how real distributed systems behave — asynchronous, eventually consistent, and event-driven.
+
+### Core Design Principles
+
+- Correlation-driven testing
+Uses correlationId and runId consistently across API, Kafka, and database layers.
+
+- Contract testing at multiple layers
+Prevents breaking changes at both API and event levels.
+
+- Eventual consistency handling
+Uses polling with timeouts instead of brittle static waits.
+
+- Cross-layer validation
+Verifies correctness across API → Kafka → Database, not just surface responses.
+
+- Parallel-safe execution
+Isolated Kafka consumer groups and test data enable safe concurrent runs.
+
+- CI observability
+Jenkins publishes reports and archives artifacts for traceability.
+
+### Contract Testing Strategy
+
+-API Contracts
+Validated in ReadyAPI using JSON Schema and field-level assertions.
+
+-Kafka Event Contracts
+Validated in Python by asserting:
+Required fields
+Data types
+Semantic correctness
+This ensures producer–consumer compatibility and catches breaking changes early.
 ### Tech Used
 
     ReadyAPI (API + Kafka testing)
