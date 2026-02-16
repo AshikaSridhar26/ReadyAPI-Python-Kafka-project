@@ -22,11 +22,7 @@ def test_add_customer_readyapi_flow():
     correlation_id = ctx["correlationId"]
     expected_name = ctx["expected"]["customerName"]
 
-    # Optional: validate API by GET if your API supports it
-    # For MockServer you can skip this, but for real API:
-    # r = requests.get(f"{cfg['api']['base_url']}/customers/{customer_id}", headers={"X-Correlation-Id": correlation_id})
-    # assert r.status_code == 200
-
+   
     #assert customer_id
     #assert correlation_id
     assert expected_name
