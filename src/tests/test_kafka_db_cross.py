@@ -35,8 +35,7 @@ def test_kafka_db_cross(kafka_cfg, mysql_conn, test_ctx, cfg):
     assert event.get("customerName") == expected_name
 
     # 2) Wait for DB row (eventual consistency)
-    # Prefer using mysql_conn directly; we pass connection details only if your helper requires them.
-    # If your wait_for_customer_row() ONLY accepts host/port/user/pass, keep this call.
+ 
     row = wait_for_customer_row(
         host=os.getenv("MYSQL_HOST", cfg["db"]["host"]),
         port=int(os.getenv("MYSQL_PORT", cfg["db"]["port"])),
