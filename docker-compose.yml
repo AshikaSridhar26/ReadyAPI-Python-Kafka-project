@@ -4,7 +4,7 @@ readyapi:
       dockerfile: readyapi/Dockerfile.readyapi
     depends_on: [kafka, mysql, mockserver]
     environment:
-      # Example env vars your ReadyAPI groovy steps may read
+    
       KAFKA_BOOTSTRAP: kafka:9092
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
@@ -13,7 +13,7 @@ readyapi:
       MYSQL_PASS: qa_pass
       API_BASE_URL: http://mockserver:1080
 
-      # license depends on your setup (examples)
+    
       # READYAPI_LICENSE_SERVER: "27000@license-server"
       # READYAPI_LICENSE_KEY: "xxxxx"
     volumes:
