@@ -27,8 +27,6 @@ COPY readyapi/project ./readyapi
 # Create artifacts folder for reports
 RUN mkdir -p /work/artifacts
 
-# ---- License handling (choose ONE approach) ----
-# License key passed as env var at runtime (recommended)
 #   READYAPI_LICENSE_KEY=xxxxx
 
 
