@@ -20,8 +20,8 @@ readyapi:
       - ./artifacts:/work/artifacts
     command: >
       /opt/readyapi/bin/testrunner.sh
-      -s "YourTestSuiteName"
-      -c "YourTestCaseName"
+      -s "Add_Customer_E2E"
+      -c "AddCustomer"
       -r
       -j
       -f /work/artifacts
