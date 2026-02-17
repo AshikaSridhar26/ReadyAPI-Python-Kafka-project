@@ -25,4 +25,4 @@ C_artifacts/
 # Local config overrides
 .env
 
-readyapi/tools/ReadyAPI-TestEngine.zip
+readyapi/tools/ReadyAPI-TestEngine
