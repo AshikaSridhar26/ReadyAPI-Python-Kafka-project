@@ -22,7 +22,7 @@ RUN mkdir -p /opt/readyapi && \
 
 
 WORKDIR /work
-COPY readyapi/project ./readyapi
+COPY KafkaAPITesting-readyapi-project.xml /work/
 
 # Create artifacts folder for reports
 RUN mkdir -p /work/artifacts
